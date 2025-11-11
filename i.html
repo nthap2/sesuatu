@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat WhatsApp</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #ece5dd;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .phone {
+      width: 360px;
+      height: 640px;
+      background-color: #fff;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: #075e54;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .chat {
+      flex: 1;
+      background: url('https://i.imgur.com/VN0nLwF.png');
+      background-size: cover;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 75%;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+
+    .sent {
+      align-self: flex-end;
+      background-color: #dcf8c6;
+    }
+
+    .time {
+      font-size: 11px;
+      color: gray;
+      text-align: right;
+      margin-top: 3px;
+    }
+
+    .typing {
+      color: gray;
+      font-size: 13px;
+      margin: 5px;
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="header">
+      <img id="profilePic" src="yourphoto.jpg" alt="Foto">
+      <div>
+        <div id="chatName">Nama Dia</div>
+        <div id="status">online</div>
+      </div>
+    </div>
+    <div class="chat" id="chatBox"></div>
+    <div class="typing" id="typingIndicator">Sedang mengetik...</div>
+  </div>
+
+  <audio id="msgSound" src="https://www.myinstants.com/media/sounds/whatsapp-notification.mp3"></audio>
+
+  <script>
+    const messages = [
+      { text: "Hai Fit", time: "23.40" },
+      { text: "Hai apa kabar?", time: "23.42" },
+      { text: "Sehat kan?", time: "23.44" },
+      { text: "Udah lama ini, ga ganggu hehe -_-", time: "23.46" },
+      { text: "Hari ini, hari yang spesial untukmu", time: "23.48" },
+      { text: "Yah, walaupun tidak sespesial yang diinginkan wk", time: "23.50" },
+      { text: "Maaf kalau mengganggu", time: "23.52" },
+      { text: "Tidak ada maksud apa-apa, hanya sekedar mengucapkan saja", time: "23.54" },
+      { text: "Hai, aku tahu kamu nggak mau diganggu lagi, dan aku akan tetap menghormati itu. Aku cuma mau ucapin satu hal aja, selamat ulang tahun untukmu yang ke 21. Dibalas atau tidak, aku cuma pengin kamu tahu kalau aku masih berharap yang terbaik buat kamu.\n\nSemoga hari ini dan seterusnya penuh hal baik yang kamu layak dapatkan dan selalu diberi kesehatan, ketenangan, kesabaran, dan kekuatan sama kamu.\n\nAku tahu mungkin posisi kita sekarang nggak seperti dulu, tapi bukan berarti aku lupa. Beberapa hal memang harus dijaga jaraknya, bukan karena sudah tidak peduli, tapi karena menghargai perasaan.\n\nJadi, cukup lewat pesan ini aku kirim doa. Semoga setiap langkahmu ke depan selalu diberi arah yang benar, semesta memeluk setiap lelahmu, dan hati kamu selalu kuat menghadapi apa pun yang datang.\n\nAku nggak akan lama, cuma ingin kamu tahu… kamu pernah berarti, dan akan tetap jadi seseorang yang aku doakan diam-diam setiap kali hari ini tiba.", time: "23.57" },
+      { text: "Mungkin itu aja, maaf ya kalau jadinya spam", time: "23.58" },
+      { text: "Sekali HBD untukmu", time: "23.59" },
+      { text: "Dibaca atau tidaknya ini, terimakasih. Oh ya, maaf aku pakai fotomu tanpa izin ya.", time: "00.00" },
+    ];
+
+    const chatBox = document.getElementById("chatBox");
+    const typingIndicator = document.getElementById("typingIndicator");
+    const msgSound = document.getElementById("msgSound");
+
+    let i = 0;
+
+    function showNextMessage() {
+      if (i < messages.length) {
+        typingIndicator.style.display = "block";
+        setTimeout(() => {
+          typingIndicator.style.display = "none";
+          const msg = document.createElement("div");
+          msg.classList.add("message", "sent");
+          msg.innerHTML = messages[i].text.replace(/\n/g, "<br>");
+          const time = document.createElement("div");
+          time.classList.add("time");
+          time.textContent = messages[i].time;
+          msg.appendChild(time);
+          chatBox.appendChild(msg);
+          msgSound.play();
+          chatBox.scrollTop = chatBox.scrollHeight;
+          i++;
+          setTimeout(showNextMessage, 3000);
+        }, 2000);
+      } else {
+        const img = document.createElement("img");
+        img.src = "dia.jpg"; // Ganti dengan nama file foto kamu
+        img.style.width = "200px";
+        img.style.borderRadius = "15px";
+        img.style.marginTop = "10px";
+        chatBox.appendChild(img);
+      }
+    }
+
+    showNextMessage();
+  </script>
+</body>
+</html>
